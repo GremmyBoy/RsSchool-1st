@@ -1,4 +1,3 @@
-import Cards from "./src/Cards/Cards";
 import About from "./src/About/About";
 import { describe, expect, it } from "vitest";
 import "@testing-library/jest-dom";

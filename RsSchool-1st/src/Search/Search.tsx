@@ -5,7 +5,7 @@ interface IState {
   input: string;
 }
 
-class Search extends React.Component<IState> {
+class Search extends React.Component<unknown, IState> {
   state: IState = {
     input: localStorage.getItem("inputValue") || "",
   };
@@ -14,12 +14,6 @@ class Search extends React.Component<IState> {
     localStorage.setItem("inputValue", this.state.input);
     console.log(this.state.input);
   }
-
-  // componentDidMount(): void {
-  //   const value = localStorage.getItem("inputValue") || "";
-  //   this.setState({ input: value });
-  //   console.log(value);
-  // }
   render() {
     return (
       <div className="Search__wrapper">
@@ -36,24 +30,5 @@ class Search extends React.Component<IState> {
     );
   }
 }
-// onInput={(e) => this.setState({ input: e.currentTarget.value })}
-// state: state = {
-//   input: localStorage.getItem("inputValue") || "",
-// };
-
-// localStorage.getItem("inputValue") || ""
-
-// onInput={(e) =>
-//   localStorage.setItem(
-//     "inputValue",
-//     (e.target as HTMLInputElement).value
-//   )
 
 export default Search;
-
-// constructor(props: Props) {
-//   super(props);
-//   this.state = {
-//     input: localStorage.getItem("inputValue") || "",
-//   };
-// }
