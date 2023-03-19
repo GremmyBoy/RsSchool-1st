@@ -10,17 +10,22 @@ class Search extends React.Component<unknown, IState> {
     input: localStorage.getItem("inputValue") || "",
   };
 
-  componentWillUnmount() {
+  componentDidUpdate() {
     localStorage.setItem("inputValue", this.state.input);
     console.log(this.state.input);
   }
+
+  // componentWillUnmount() {
+  //   localStorage.setItem("inputValue", this.state.input);
+  //   console.log(this.state.input);
+  // }
   render() {
     return (
       <div className="Search__wrapper">
         <input
           onChange={(e) => {
             this.setState({ input: e.currentTarget.value });
-            localStorage.setItem("inputValue", e.currentTarget.value);
+            // localStorage.setItem("inputValue", e.currentTarget.value);
           }}
           type="text"
           className="Search__input"
