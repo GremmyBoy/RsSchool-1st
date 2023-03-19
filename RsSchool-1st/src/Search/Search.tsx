@@ -5,17 +5,10 @@ interface IState {
   input: string;
 }
 
-interface Props {
-  props: number;
-}
-
-class Search extends React.Component<Props, IState> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      input: localStorage.getItem("inputValue") || "",
-    };
-  }
+class Search extends React.Component<IState> {
+  state: IState = {
+    input: localStorage.getItem("inputValue") || "",
+  };
 
   componentWillUnmount() {
     localStorage.setItem("inputValue", this.state.input);
@@ -57,3 +50,10 @@ class Search extends React.Component<Props, IState> {
 //   )
 
 export default Search;
+
+// constructor(props: Props) {
+//   super(props);
+//   this.state = {
+//     input: localStorage.getItem("inputValue") || "",
+//   };
+// }
