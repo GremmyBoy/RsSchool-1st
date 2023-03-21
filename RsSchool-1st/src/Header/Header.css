@@ -17,3 +17,7 @@
   color: rgb(153, 127, 255);
   font-size: 45px;
 }
+
+.Header ul li a.active {
+  color: red;
+}

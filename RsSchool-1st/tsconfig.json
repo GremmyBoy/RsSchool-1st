@@ -16,6 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "../setupTest.ts", ".eslintrc.cjs", "vite.config.ts"],
+  "include": ["src", "../setupTest.ts", ".eslintrc.cjs", "vite.config.ts", "Cards.test.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
