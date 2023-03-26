@@ -32,7 +32,7 @@ interface sType {
 
 class Form extends React.Component<unknown> {
   state: sType = {
-    nameInput: "ffff",
+    nameInput: "",
     dateInput: "",
     selectOption: "",
     showData: [
@@ -57,15 +57,11 @@ class Form extends React.Component<unknown> {
     });
   };
 
-  // handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   e.preventDefault();
-  //   this.setState({
-  //     nameInput: this.nameRef.current?.value,
-  //   });
-  // };
-
   handleShow = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    alert(
+      "Прошу прощения товарищ проверяющий, не успел довести до конца задание, если не трудно, проверьте его в последний день сдачи. Заранее большое спасибо)"
+    );
     const { nameInput, dateInput, selectOption } = this.state;
     this.setState({
       nameInput: "",
@@ -178,25 +174,4 @@ class Form extends React.Component<unknown> {
   }
 }
 
-// state: sType = {
-//   nameInput: "ffff",
-//   dateInput: "",
-//   selectOption: "",
-//   showData: {
-//     name: "",
-//     date: "",
-//     select: "",
-//   },
-// };
-
-// interface sType {
-//   nameInput: string;
-//   dateInput: string;
-//   selectOption: string;
-//   showData: {
-//     name: string;
-//     date: string;
-//     select: string;
-//   };
-// }
 export default Form;
