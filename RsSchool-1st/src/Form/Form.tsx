@@ -22,7 +22,7 @@ interface sType {
   selectOption: string;
   showData: [
     {
-      id: "";
+      id: string;
       name: string;
       date: string;
       select: string;
@@ -30,7 +30,7 @@ interface sType {
   ];
 }
 
-class Form extends React.Component<sType> {
+class Form extends React.Component<unknown> {
   state: sType = {
     nameInput: "ffff",
     dateInput: "",
@@ -164,7 +164,6 @@ class Form extends React.Component<sType> {
                 accept="image/png, image/jpeg"
               />
             </label>
-            <input type="textarea" />
             <button onClick={this.handleShow}>Create card</button>
           </form>
         </div>
