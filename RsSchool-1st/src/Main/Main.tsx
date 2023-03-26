@@ -1,5 +1,5 @@
 import "./Main.css";
-import { base } from "../Base";
+import { base } from "../Base/Base";
 import Cards from "../Cards/Cards";
 import Search from "../Search/Search";
 

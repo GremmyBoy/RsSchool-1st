@@ -3,6 +3,7 @@ import Header from "./Header/Header";
 import Main from "./Main/Main";
 import About from "./About/About";
 import Error from "./Error/Error";
+import Form from "./Form/Form";
 import { Route, Routes } from "react-router-dom";
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<Main />} />
         <Route path="/main" element={<Main />} />
         <Route path="/about" element={<About />} />
+        <Route path="/form" element={<Form />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </div>

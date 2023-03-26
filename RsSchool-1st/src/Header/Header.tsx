@@ -13,6 +13,9 @@ function Header() {
             <li>
               <NavLink to="/main">Main</NavLink>
             </li>
+            <li>
+              <NavLink to="/form">Form</NavLink>
+            </li>
           </ul>
         </nav>
       </div>

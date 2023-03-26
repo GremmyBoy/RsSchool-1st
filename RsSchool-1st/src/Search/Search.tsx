@@ -10,9 +10,9 @@ class Search extends React.PureComponent<unknown, IState> {
     input: localStorage.getItem("inputValue") || "",
   };
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     localStorage.setItem("inputValue", this.state.input);
-  }
+  };
 
   render() {
     return (
@@ -20,7 +20,6 @@ class Search extends React.PureComponent<unknown, IState> {
         <input
           onChange={(e) => {
             this.setState({ input: e.currentTarget.value });
-            localStorage.setItem("inputValue", e.currentTarget.value);
           }}
           type="text"
           className="Search__input"
