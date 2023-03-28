@@ -16,18 +16,26 @@ interface check {
   title: string;
 }
 
+interface dataType {
+  nameInput: string;
+  dateInput: string;
+  selectOption: string;
+  radioInput: boolean;
+  checkboxInput: boolean;
+  inputPhoto: string | undefined;
+}
+
 interface sType {
   nameInput: string;
   dateInput: string;
   selectOption: string;
-  showData: [
-    {
-      id: string;
-      name: string;
-      date: string;
-      select: string;
-    }
-  ];
+  radioInput: boolean;
+  checkboxInput: boolean;
+  inputPhoto: string;
+  selectOptionError: boolean;
+  formSubmitted: boolean;
+  nameInputError: boolean;
+  data: dataType[];
 }
 
 class Form extends React.Component<unknown> {
@@ -35,19 +43,19 @@ class Form extends React.Component<unknown> {
     nameInput: "",
     dateInput: "",
     selectOption: "",
-    showData: [
-      {
-        id: "",
-        name: "",
-        date: "",
-        select: "",
-      },
-    ],
+    radioInput: false,
+    checkboxInput: false,
+    inputPhoto: "",
+    selectOptionError: false,
+    nameInputError: false,
+    formSubmitted: false,
+    data: [],
   };
 
   nameRef = React.createRef<HTMLInputElement>();
   dateRef = React.createRef<HTMLInputElement>();
   selectRef = React.createRef<HTMLSelectElement>();
+  checkRef = React.createRef<HTMLInputElement>();
 
   handleChange = () => {
     this.setState({
@@ -57,25 +65,60 @@ class Form extends React.Component<unknown> {
     });
   };
 
-  handleShow = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    alert(
-      "Прошу прощения товарищ проверяющий, не успел довести до конца задание, если не трудно, проверьте его в последний день сдачи. Заранее большое спасибо)"
-    );
-    const { nameInput, dateInput, selectOption } = this.state;
-    this.setState({
+  handleChangeRadio = () => {
+    this.setState({ radioInput: !this.state.radioInput });
+  };
+  handleChangeCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // this.setState({ checkboxInput: !this.state.checkboxInput });
+    const { checked } = event.target as unknown as { checked: boolean };
+    this.setState({ checkboxInput: checked });
+  };
+
+  handleChangePhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) {
+      return;
+    }
+    if (event.target.files && event.target.files[0]) {
+      this.setState({ inputPhoto: URL.createObjectURL(event.target.files[0]) });
+    }
+  };
+
+  handleShow = (e: React.SyntheticEvent) => {
+    const item: dataType = {
+      nameInput: this.state.nameInput,
+      dateInput: this.state.dateInput,
+      selectOption: this.state.selectOption,
+      radioInput: this.state.radioInput,
+      checkboxInput: this.state.checkboxInput,
+      inputPhoto: this.state.inputPhoto,
+    };
+    const newState: Omit<sType, "data"> = {
       nameInput: "",
       dateInput: "",
       selectOption: "",
-      showData: [
-        {
-          id: nameInput,
-          name: nameInput,
-          date: dateInput,
-          select: selectOption,
-        },
-      ],
-    });
+      radioInput: false,
+      checkboxInput: false,
+      inputPhoto: "",
+      selectOptionError: false,
+      nameInputError: false,
+      formSubmitted: false,
+    };
+
+    this.setState({ formSubmitted: true });
+    if (this.selectRef.current?.value === "Make your choice") {
+      this.setState({ selectOptionError: true });
+    } else {
+      this.setState({ selectOptionError: false });
+    }
+    if (this.state.checkboxInput && !this.state.selectOptionError) {
+      this.setState({
+        ...this.state,
+        ...newState,
+        data: [...this.state.data, item],
+      });
+    }
+    console.log(this.state);
+    e.preventDefault();
   };
 
   render(): React.ReactNode {
@@ -83,7 +126,7 @@ class Form extends React.Component<unknown> {
       <div className="Form">
         <h1>Form</h1>
         <div className="Form-wrapper">
-          <form className="Form-container">
+          <form onSubmit={this.handleShow} className="Form-container">
             <label>
               Name:
               <input
@@ -111,6 +154,11 @@ class Form extends React.Component<unknown> {
               name="direction"
               id="direction"
               value={this.state.selectOption}
+              style={{
+                border: `${
+                  this.state.selectOptionError ? "2px solid red" : ""
+                }`,
+              }}
             >
               {options.map((item: params) => (
                 <option key={item.id} value={item.value}>
@@ -118,37 +166,31 @@ class Form extends React.Component<unknown> {
                 </option>
               ))}
             </select>
-            <div className="Hobbies">
-              <h3>Choose your hobbies</h3>
-              <div className="Hobbies-container">
-                {checkBox.map((item: check) => (
-                  <>
-                    <input
-                      type="checkbox"
-                      key={item.id}
-                      id={item.id}
-                      value={item.value}
-                    />
-                    <label htmlFor={item.id}>{item.title}</label>
-                  </>
-                ))}
-              </div>
-            </div>
-            <div className="Level">
-              <h3>Choose your IT level</h3>
-              <div className="Level-container">
-                {radio.map((item: check) => (
-                  <>
-                    <input
-                      type="radio"
-                      key={item.id}
-                      id={item.id}
-                      name="radio"
-                      value={item.value}
-                    />
-                    <label htmlFor={item.id}>{item.title}</label>
-                  </>
-                ))}
+            <div className="Gender">
+              <h3>Choose your gender</h3>
+              <div className="Gender-container">
+                <>
+                  <input
+                    type="radio"
+                    name="radio"
+                    id="male"
+                    checked={this.state.radioInput}
+                    value={"male"}
+                    onChange={this.handleChangeRadio}
+                  />
+                  <label htmlFor={"male"}>Male</label>
+                </>
+                <>
+                  <input
+                    type="radio"
+                    name="radio"
+                    id="female"
+                    value={"male"}
+                    checked={!this.state.radioInput}
+                    onChange={this.handleChangeRadio}
+                  />
+                  <label htmlFor={"female"}>Female</label>
+                </>
               </div>
             </div>
             <label htmlFor="avatar">
@@ -158,20 +200,53 @@ class Form extends React.Component<unknown> {
                 id="avatar"
                 name="image"
                 accept="image/png, image/jpeg"
+                onChange={this.handleChangePhoto}
               />
             </label>
-            <button onClick={this.handleShow}>Create card</button>
+            {!this.state.checkboxInput && this.state.formSubmitted && (
+              <div style={{ color: "red" }}>Error</div>
+            )}
+            <label htmlFor="license">
+              Accept with our politics:
+              <input
+                ref={this.checkRef}
+                type="checkbox"
+                id="license"
+                name="license"
+                checked={this.state.checkboxInput}
+                onChange={this.handleChangeCheck}
+              />
+            </label>
+            <button type="submit" value="Create card">
+              Create card
+            </button>
           </form>
         </div>
-        {this.state.showData.map((card) => (
-          <div key={card.id} className="new-Card">
-            <h2>{card.name}</h2>
-            <p>{card.date}</p>
-          </div>
-        ))}
       </div>
     );
   }
 }
+
+// showData: [
+//   {
+//     id: nameInput,
+//     name: nameInput,
+//     date: dateInput,
+//     select: selectOption,
+//   },
+// ]
+
+// {radio.map((item: check) => (
+//   <>
+//     <input
+//       type="radio"
+//       key={item.id}
+//       id={item.id}
+//       name="radio"
+//       value={item.value}
+//     />
+//     <label htmlFor={item.id}>{item.title}</label>
+//   </>
+// ))}
 
 export default Form;
