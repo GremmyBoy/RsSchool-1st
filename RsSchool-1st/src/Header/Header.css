@@ -1,0 +1,23 @@
+.Header {
+  text-align: center;
+}
+
+.Header ul {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  gap: 300px;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.Header ul li a{
+  text-decoration: none;
+  color: rgb(153, 127, 255);
+  font-size: 45px;
+}
+
+.Header ul li a.active {
+  color: red;
+}
