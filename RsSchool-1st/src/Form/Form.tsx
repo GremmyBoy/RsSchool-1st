@@ -139,6 +139,9 @@ class Form extends React.Component<unknown> {
         <h1>Form</h1>
         <div className="Form-wrapper">
           <form onSubmit={this.handleShow} className="Form-container">
+            {this.state.nameInputError && (
+              <div style={{ color: "red" }}>Input your name</div>
+            )}
             <label>
               Name:
               <input
@@ -149,7 +152,7 @@ class Form extends React.Component<unknown> {
                 value={this.state.nameInput}
                 placeholder="Input your name..."
                 style={{
-                  border: `${this.state.nameInputError ? "2px solid red" : ""}`,
+                  border: `${this.state.nameInputError ? "2px dash red" : ""}`,
                 }}
               />
             </label>
@@ -170,9 +173,7 @@ class Form extends React.Component<unknown> {
               id="direction"
               required
               style={{
-                border: `${
-                  this.state.selectOptionError ? "2px solid red" : ""
-                }`,
+                border: `${this.state.selectOptionError ? "2px dash red" : ""}`,
               }}
             >
               {options.map((item: params) => (
