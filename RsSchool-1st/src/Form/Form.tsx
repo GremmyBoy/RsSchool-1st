@@ -1,8 +1,7 @@
 import React from "react";
 import "./Form.css";
 import { options } from "../Base/Options";
-import { checkBox } from "../Base/Checkbox";
-import { radio } from "../Base/Radio";
+import CreateForm from "../CreateForm/CreateForm";
 
 interface params {
   id: number;
@@ -10,19 +9,13 @@ interface params {
   title: string;
 }
 
-interface check {
-  id: string;
-  value: string;
-  title: string;
-}
-
-interface dataType {
+export interface dataType {
   nameInput: string;
   dateInput: string;
-  selectOption: string;
+  selectOption: string | undefined;
   radioInput: boolean;
   checkboxInput: boolean;
-  inputPhoto: string | undefined;
+  inputPhoto: string;
 }
 
 interface sType {
@@ -61,7 +54,6 @@ class Form extends React.Component<unknown> {
     this.setState({
       nameInput: this.nameRef.current?.value,
       dateInput: this.dateRef.current?.value,
-      selectOption: this.selectRef.current?.value,
     });
   };
 
@@ -87,7 +79,7 @@ class Form extends React.Component<unknown> {
     const item: dataType = {
       nameInput: this.state.nameInput,
       dateInput: this.state.dateInput,
-      selectOption: this.state.selectOption,
+      selectOption: this.selectRef.current?.value,
       radioInput: this.state.radioInput,
       checkboxInput: this.state.checkboxInput,
       inputPhoto: this.state.inputPhoto,
@@ -105,12 +97,32 @@ class Form extends React.Component<unknown> {
     };
 
     this.setState({ formSubmitted: true });
+    // if (this.selectRef.current?.value === "Make your choice") {
+    //   this.setState({ selectOptionError: true });
+    // } else {
+    //   this.setState({ selectOptionError: false });
+    // }
     if (this.selectRef.current?.value === "Make your choice") {
-      this.setState({ selectOptionError: true });
+      this.setState((state) => ({ ...state, selectOptionError: true }));
     } else {
-      this.setState({ selectOptionError: false });
+      this.setState((state) => ({ ...state, selectOptionError: false }));
     }
-    if (this.state.checkboxInput && !this.state.selectOptionError) {
+
+    if (
+      this.state.nameInput === "" ||
+      this.state.nameInput.charAt(0) !==
+        this.state.nameInput.charAt(0).toUpperCase()
+    ) {
+      this.setState({ nameInputError: true });
+    } else {
+      this.setState({ nameInputError: false });
+    }
+
+    if (
+      this.state.checkboxInput &&
+      !this.state.selectOptionError &&
+      !this.state.nameInputError
+    ) {
       this.setState({
         ...this.state,
         ...newState,
@@ -135,6 +147,10 @@ class Form extends React.Component<unknown> {
                 type="text"
                 name="name"
                 value={this.state.nameInput}
+                placeholder="Input your name..."
+                style={{
+                  border: `${this.state.nameInputError ? "2px solid red" : ""}`,
+                }}
               />
             </label>
             <label>
@@ -149,11 +165,10 @@ class Form extends React.Component<unknown> {
             </label>
             <label htmlFor="direction">Select your direction</label>
             <select
-              onChange={this.handleChange}
               ref={this.selectRef}
               name="direction"
               id="direction"
-              value={this.state.selectOption}
+              required
               style={{
                 border: `${
                   this.state.selectOptionError ? "2px solid red" : ""
@@ -222,6 +237,7 @@ class Form extends React.Component<unknown> {
             </button>
           </form>
         </div>
+        <CreateForm data={this.state.data} />
       </div>
     );
   }
@@ -249,4 +265,9 @@ class Form extends React.Component<unknown> {
 //   </>
 // ))}
 
+// if (this.selectRef.current?.value === "Make your choice") {
+//   this.setState((state) => ({ ...state, selectOptionError: true }));
+// } else {
+//   this.setState((state) => ({ ...state, selectOptionError: false }));
+// }
 export default Form;
