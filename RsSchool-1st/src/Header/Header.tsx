@@ -1,10 +1,22 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Route, Routes } from "react-router-dom";
 import "./Header.css";
 
 function Header() {
   return (
     <div className="Header">
       <div className="Header-container">
+        <div>
+          Current page:
+          <h2>
+            <Routes>
+              <Route path="/" element={"Main"} />
+              <Route path="/main" element={"Main"} />
+              <Route path="/about" element={"About"} />
+              <Route path="/form" element={"Form"} />
+              <Route path="*" element={"Error page"} />
+            </Routes>
+          </h2>
+        </div>
         <nav>
           <ul>
             <li>
