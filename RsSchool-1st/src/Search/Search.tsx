@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useEffect,
   useState,
+  useRef,
 } from "react";
 import "./Search.css";
 
@@ -11,23 +12,26 @@ import "./Search.css";
 //   input: string;
 // }
 
-const Search = () => {
-  const [input, setInput] = useState<string>("");
+export const Search = () => {
+  const inputValue = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setInput(localStorage.getItem("inputValue") || "");
-  }, []);
-
-  useEffect(() => {
+    const currentRef = inputValue.current;
+    if (currentRef !== null) {
+      currentRef.value = localStorage.getItem("inputValue") || "";
+    }
     return () => {
-      console.log("useEffectrender");
-      localStorage.setItem("inputValue", input);
+      if (currentRef !== null) {
+        localStorage.setItem("inputValue", currentRef.value);
+      }
     };
   }, []);
 
-  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setInput(e.currentTarget.value);
-  }, []);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (inputValue.current !== null) {
+      inputValue.current.value = e.target.value;
+    }
+  };
 
   return (
     <div className="Search__wrapper">
@@ -35,13 +39,11 @@ const Search = () => {
         onChange={handleChange}
         type="text"
         className="Search__input"
-        value={input}
+        ref={inputValue}
       />
     </div>
   );
 };
-
-// localStorage.getItem("inputValue") || ""
 
 // class Search extends React.PureComponent<unknown, IState> {
 //   state: IState = {
