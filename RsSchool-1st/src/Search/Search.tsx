@@ -1,33 +1,71 @@
-import React from "react";
+import React, {
+  ChangeEvent,
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import "./Search.css";
 
-interface IState {
-  input: string;
-}
+// interface IState {
+//   input: string;
+// }
 
-class Search extends React.PureComponent<unknown, IState> {
-  state: IState = {
-    input: localStorage.getItem("inputValue") || "",
-  };
+const Search = () => {
+  const [input, setInput] = useState<string>("");
 
-  componentWillUnmount = () => {
-    localStorage.setItem("inputValue", this.state.input);
-  };
+  useEffect(() => {
+    setInput(localStorage.getItem("inputValue") || "");
+  }, []);
 
-  render() {
-    return (
-      <div className="Search__wrapper">
-        <input
-          onChange={(e) => {
-            this.setState({ input: e.currentTarget.value });
-          }}
-          type="text"
-          className="Search__input"
-          value={this.state.input}
-        />
-      </div>
-    );
-  }
-}
+  useEffect(() => {
+    return () => {
+      console.log("useEffectrender");
+      localStorage.setItem("inputValue", input);
+    };
+  }, []);
+
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setInput(e.currentTarget.value);
+  }, []);
+
+  return (
+    <div className="Search__wrapper">
+      <input
+        onChange={handleChange}
+        type="text"
+        className="Search__input"
+        value={input}
+      />
+    </div>
+  );
+};
+
+// localStorage.getItem("inputValue") || ""
+
+// class Search extends React.PureComponent<unknown, IState> {
+//   state: IState = {
+//     input: localStorage.getItem("inputValue") || "",
+//   };
+
+//   componentWillUnmount = () => {
+//     localStorage.setItem("inputValue", this.state.input);
+//   };
+
+//   render() {
+//     return (
+//       <div className="Search__wrapper">
+//         <input
+//           onChange={(e) => {
+//             this.setState({ input: e.currentTarget.value });
+//           }}
+//           type="text"
+//           className="Search__input"
+//           value={this.state.input}
+//         />
+//       </div>
+//     );
+//   }
+// }
 
 export default Search;

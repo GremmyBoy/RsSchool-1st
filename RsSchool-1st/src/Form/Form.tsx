@@ -76,6 +76,7 @@ class Form extends React.Component<unknown> {
   };
 
   handleShow = (e: React.SyntheticEvent) => {
+    e.preventDefault();
     const item: dataType = {
       nameInput: this.state.nameInput,
       dateInput: this.state.dateInput,
@@ -97,11 +98,6 @@ class Form extends React.Component<unknown> {
     };
 
     this.setState({ formSubmitted: true });
-    // if (this.selectRef.current?.value === "Make your choice") {
-    //   this.setState({ selectOptionError: true });
-    // } else {
-    //   this.setState({ selectOptionError: false });
-    // }
     if (this.selectRef.current?.value === "Make your choice") {
       this.setState((state) => ({ ...state, selectOptionError: true }));
     } else {
@@ -130,7 +126,6 @@ class Form extends React.Component<unknown> {
       });
     }
     console.log(this.state);
-    e.preventDefault();
   };
 
   render(): React.ReactNode {
