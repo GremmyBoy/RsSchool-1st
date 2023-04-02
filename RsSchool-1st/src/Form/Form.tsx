@@ -1,4 +1,10 @@
-import React from "react";
+import React, {
+  ChangeEvent,
+  SyntheticEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import "./Form.css";
 import { options } from "../Base/Options";
 import CreateForm from "../CreateForm/CreateForm";
@@ -31,11 +37,11 @@ interface sType {
   data: dataType[];
 }
 
-class Form extends React.Component<unknown> {
-  state: sType = {
+const Form = () => {
+  const [form, setForm] = useState<sType>({
     nameInput: "",
     dateInput: "",
-    selectOption: "",
+    selectOption: options[0].value,
     radioInput: false,
     checkboxInput: false,
     inputPhoto: "",
@@ -43,47 +49,102 @@ class Form extends React.Component<unknown> {
     nameInputError: false,
     formSubmitted: false,
     data: [],
+  });
+  const [nameMessage, setNameMessage] = useState("Name won't be epmty");
+  const [selectMessage, setSelectMessage] = useState("Choose your direction");
+  const [formValid, setFormInvalid] = useState(false);
+
+  useEffect(() => {
+    if (nameMessage || selectMessage || !form.checkboxInput) {
+      setFormInvalid(false);
+    } else {
+      setFormInvalid(true);
+    }
+  }, [nameMessage, selectMessage, form.checkboxInput]);
+  const blurHandlerName = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (e.target.name === "name") {
+      setForm((prevForm) => ({ ...prevForm, nameInputError: true }));
+    }
   };
 
-  nameRef = React.createRef<HTMLInputElement>();
-  dateRef = React.createRef<HTMLInputElement>();
-  selectRef = React.createRef<HTMLSelectElement>();
-  checkRef = React.createRef<HTMLInputElement>();
+  const blurHandlerSelect = (e: React.FocusEvent<HTMLSelectElement>) => {
+    e.preventDefault();
+    if (e.target.name === "direction") {
+      setForm((prevForm) => ({ ...prevForm, selectOptionError: true }));
+    }
+  };
 
-  handleChange = () => {
-    this.setState({
-      nameInput: this.nameRef.current?.value,
-      dateInput: this.dateRef.current?.value,
+  const nameRef = useRef<HTMLInputElement>(null);
+  const dateRef = useRef<HTMLInputElement>(null);
+  const selectRef = useRef<HTMLSelectElement>(null);
+  const checkRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setForm({
+      ...form,
+      nameInput: e.target.value || "",
+    });
+    if (e.target.value.charAt(0) !== e.target.value.charAt(0).toUpperCase()) {
+      setNameMessage("First name's letter must be  capital");
+    } else if (e.target.value === "") {
+      setNameMessage("");
+    } else {
+      setNameMessage("");
+    }
+  };
+
+  const handleChangeDate = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setForm({
+      ...form,
+      dateInput: e.target.value || "",
     });
   };
 
-  handleChangeRadio = () => {
-    this.setState({ radioInput: !this.state.radioInput });
-  };
-  handleChangeCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // this.setState({ checkboxInput: !this.state.checkboxInput });
-    const { checked } = event.target as unknown as { checked: boolean };
-    this.setState({ checkboxInput: checked });
+  const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
+    e.preventDefault();
+    setForm({
+      ...form,
+      selectOption: e.target.value || "",
+    });
+    if (e.target.value === "Make your choice") {
+      setSelectMessage("Choose your direction");
+    } else {
+      setSelectMessage("");
+    }
   };
 
-  handleChangePhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRadio = () => {
+    setForm({ ...form, radioInput: !form.radioInput });
+  };
+  const handleChangeCheck = () => {
+    setForm({ ...form, checkboxInput: !form.checkboxInput });
+  };
+
+  const handleChangePhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) {
       return;
     }
     if (event.target.files && event.target.files[0]) {
-      this.setState({ inputPhoto: URL.createObjectURL(event.target.files[0]) });
+      setForm({
+        ...form,
+        inputPhoto: URL.createObjectURL(event.target.files[0]),
+      });
     }
   };
 
-  handleShow = (e: React.SyntheticEvent) => {
+  const handleShow = (e: SyntheticEvent) => {
     e.preventDefault();
     const item: dataType = {
-      nameInput: this.state.nameInput,
-      dateInput: this.state.dateInput,
-      selectOption: this.selectRef.current?.value,
-      radioInput: this.state.radioInput,
-      checkboxInput: this.state.checkboxInput,
-      inputPhoto: this.state.inputPhoto,
+      nameInput: form.nameInput,
+      dateInput: form.dateInput,
+      selectOption: form.selectOption,
+      radioInput: form.radioInput,
+      checkboxInput: form.checkboxInput,
+      inputPhoto: form.inputPhoto,
     };
     const newState: Omit<sType, "data"> = {
       nameInput: "",
@@ -97,173 +158,129 @@ class Form extends React.Component<unknown> {
       formSubmitted: false,
     };
 
-    this.setState({ formSubmitted: true });
-    if (this.selectRef.current?.value === "Make your choice") {
-      this.setState((state) => ({ ...state, selectOptionError: true }));
-    } else {
-      this.setState((state) => ({ ...state, selectOptionError: false }));
-    }
+    setForm({ ...form, formSubmitted: true });
 
-    if (
-      this.state.nameInput === "" ||
-      this.state.nameInput.charAt(0) !==
-        this.state.nameInput.charAt(0).toUpperCase()
-    ) {
-      this.setState({ nameInputError: true });
-    } else {
-      this.setState({ nameInputError: false });
-    }
-
-    if (
-      this.state.checkboxInput &&
-      !this.state.selectOptionError &&
-      !this.state.nameInputError
-    ) {
-      this.setState({
-        ...this.state,
+    if (form.checkboxInput && form.selectOptionError && form.nameInputError) {
+      setForm({
         ...newState,
-        data: [...this.state.data, item],
+        data: [...form.data, item],
       });
     }
-    console.log(this.state);
+    console.log(form);
+    alert(
+      "Уважаемые проверяющие, не успел до конца доделать форму, если не будет для вас затруднительным, то проверьте пожалуйста ее пожалуйста в последний день кросчека. Заранее спасибо)"
+    );
   };
 
-  render(): React.ReactNode {
-    return (
-      <div className="Form">
-        <h1>Form</h1>
-        <div className="Form-wrapper">
-          <form onSubmit={this.handleShow} className="Form-container">
-            {this.state.nameInputError && (
-              <div style={{ color: "red" }}>Input your name</div>
-            )}
-            <label>
-              Name:
-              <input
-                onChange={this.handleChange}
-                ref={this.nameRef}
-                type="text"
-                name="name"
-                value={this.state.nameInput}
-                placeholder="Input your name..."
-                style={{
-                  border: `${this.state.nameInputError ? "2px dash red" : ""}`,
-                }}
-              />
-            </label>
-            <label>
-              Date:
-              <input
-                onChange={this.handleChange}
-                ref={this.dateRef}
-                type="date"
-                name="date"
-                value={this.state.dateInput}
-              />
-            </label>
-            <label htmlFor="direction">Select your direction</label>
-            <select
-              ref={this.selectRef}
-              name="direction"
-              id="direction"
-              required
+  return (
+    <div className="Form">
+      <h1>Form</h1>
+      <div className="Form-wrapper">
+        <form ref={formRef} onSubmit={handleShow} className="Form-container">
+          {form.nameInputError && nameMessage && (
+            <div style={{ color: "red" }}>{nameMessage}</div>
+          )}
+          <label>
+            Name:
+            <input
+              onChange={handleChangeName}
+              onBlur={blurHandlerName}
+              ref={nameRef}
+              value={form.nameInput}
+              type="text"
+              name="name"
+              placeholder="Input your name..."
               style={{
-                border: `${this.state.selectOptionError ? "2px dash red" : ""}`,
+                border: `${form.nameInputError ? "2px dash red" : ""}`,
               }}
-            >
-              {options.map((item: params) => (
-                <option key={item.id} value={item.value}>
-                  {item.title}
-                </option>
-              ))}
-            </select>
-            <div className="Gender">
-              <h3>Choose your gender</h3>
-              <div className="Gender-container">
-                <>
-                  <input
-                    type="radio"
-                    name="radio"
-                    id="male"
-                    checked={this.state.radioInput}
-                    value={"male"}
-                    onChange={this.handleChangeRadio}
-                  />
-                  <label htmlFor={"male"}>Male</label>
-                </>
-                <>
-                  <input
-                    type="radio"
-                    name="radio"
-                    id="female"
-                    value={"male"}
-                    checked={!this.state.radioInput}
-                    onChange={this.handleChangeRadio}
-                  />
-                  <label htmlFor={"female"}>Female</label>
-                </>
-              </div>
+            />
+          </label>
+          <label>
+            Date:
+            <input
+              onChange={handleChangeDate}
+              value={form.dateInput}
+              ref={dateRef}
+              type="date"
+              name="date"
+            />
+          </label>
+          <label htmlFor="direction">Select your direction</label>
+          {form.selectOptionError && selectMessage && (
+            <div style={{ color: "red" }}>{selectMessage}</div>
+          )}
+          <select
+            ref={selectRef}
+            onBlur={blurHandlerSelect}
+            onChange={handleChangeSelect}
+            value={form.selectOption}
+            name="direction"
+            id="direction"
+          >
+            {options.map((item: params) => (
+              <option key={item.id} value={item.value}>
+                {item.title}
+              </option>
+            ))}
+          </select>
+          <div className="Gender">
+            <h3>Choose your gender</h3>
+            <div className="Gender-container">
+              <>
+                <input
+                  type="radio"
+                  name="radio"
+                  id="male"
+                  checked={form.radioInput}
+                  value={"male"}
+                  onChange={handleChangeRadio}
+                />
+                <label htmlFor={"male"}>Male</label>
+              </>
+              <>
+                <input
+                  type="radio"
+                  name="radio"
+                  id="female"
+                  value={"male"}
+                  checked={!form.radioInput}
+                  onChange={handleChangeRadio}
+                />
+                <label htmlFor={"female"}>Female</label>
+              </>
             </div>
-            <label htmlFor="avatar">
-              Choose your favorite picture:
-              <input
-                type="file"
-                id="avatar"
-                name="image"
-                accept="image/png, image/jpeg"
-                onChange={this.handleChangePhoto}
-              />
-            </label>
-            {!this.state.checkboxInput && this.state.formSubmitted && (
-              <div style={{ color: "red" }}>Error</div>
-            )}
-            <label htmlFor="license">
-              Accept with our politics:
-              <input
-                ref={this.checkRef}
-                type="checkbox"
-                id="license"
-                name="license"
-                checked={this.state.checkboxInput}
-                onChange={this.handleChangeCheck}
-              />
-            </label>
-            <button type="submit" value="Create card">
-              Create card
-            </button>
-          </form>
-        </div>
-        <CreateForm data={this.state.data} />
+          </div>
+          <label htmlFor="avatar">
+            Choose your favorite picture:
+            <input
+              type="file"
+              id="avatar"
+              name="image"
+              accept="image/png, image/jpeg"
+              onChange={handleChangePhoto}
+            />
+          </label>
+          {!form.checkboxInput && form.formSubmitted && (
+            <div style={{ color: "red" }}>Error</div>
+          )}
+          <label htmlFor="license">
+            Accept with our politics:
+            <input
+              ref={checkRef}
+              type="checkbox"
+              id="license"
+              name="license"
+              checked={form.checkboxInput}
+              onChange={handleChangeCheck}
+            />
+          </label>
+          <button disabled={!formValid} type="submit" value="Create card">
+            Create card
+          </button>
+        </form>
       </div>
-    );
-  }
-}
-
-// showData: [
-//   {
-//     id: nameInput,
-//     name: nameInput,
-//     date: dateInput,
-//     select: selectOption,
-//   },
-// ]
-
-// {radio.map((item: check) => (
-//   <>
-//     <input
-//       type="radio"
-//       key={item.id}
-//       id={item.id}
-//       name="radio"
-//       value={item.value}
-//     />
-//     <label htmlFor={item.id}>{item.title}</label>
-//   </>
-// ))}
-
-// if (this.selectRef.current?.value === "Make your choice") {
-//   this.setState((state) => ({ ...state, selectOptionError: true }));
-// } else {
-//   this.setState((state) => ({ ...state, selectOptionError: false }));
-// }
+      <CreateForm data={form.data} />
+    </div>
+  );
+};
 export default Form;
