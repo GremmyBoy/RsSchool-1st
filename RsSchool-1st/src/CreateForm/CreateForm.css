@@ -1,0 +1,15 @@
+.Create-form {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    
+}
+
+.Create-card {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid black;
+    padding: 5px;
+    background-color: aqua;
+}
