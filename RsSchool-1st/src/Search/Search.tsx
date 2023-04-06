@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useRef } from "react";
+import { ChangeEvent, useEffect, useRef } from "react";
 import "./Search.css";
 
 export const Search = () => {
